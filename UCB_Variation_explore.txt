@@ -1,0 +1,1 @@
+[["Specs_99.pdbqt", 1], ["Specs_102.pdbqt", 1], ["Specs_105.pdbqt", 1], ["Specs_1.pdbqt", 1], ["Specs_22.pdbqt", 1], ["Specs_58.pdbqt", 1], ["Specs_20.pdbqt", 1], ["Specs_15.pdbqt", 1], ["Specs_95.pdbqt", 1], ["Specs_93.pdbqt", 1]]

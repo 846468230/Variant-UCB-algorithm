@@ -1,0 +1,19 @@
+receptor = 125.pdbqt
+ligand = sp_59.pdbqt
+
+
+center_x = 30.532
+center_y = 39.996
+center_z = -36.177
+
+
+
+size_x = 22
+size_y = 22
+size_z = 22
+
+
+cpu = 1
+energy_range = 3
+exhaustiveness = 8
+num_modes = 8
