@@ -46,11 +46,11 @@ def stddev(lst):
     return math.sqrt(float(reduce(lambda x, y: x + y, map(lambda x: (x - mean) ** 2, lst))) / len(lst))
 
 
-class UCB_Variation(Solver):
+class rUCB(Solver):
     def __init__(self, ligands, receptors, configs, percent, c=1, init_proba=0.0):
         super().__init__(ligands, receptors, configs)
         from main import virtual
-        self.name = "UCB_Variation"
+        self.name = "rUCB"
         self.c = c
         if percent<1:
             self.winner = math.ceil(percent * self.bandit.length )  # if percent < 1 change it to int according the bandit length 

@@ -3,7 +3,7 @@
 
 import sys, getopt
 from experiment import Proteins,Configs,Receptors,Receptors_for_random,Virtual_ligands
-from solvers import UCB_Variation
+from solvers import rUCB
 from config import search_bind
 import os
 import operator
@@ -35,27 +35,27 @@ def experiment(N,ligands_path,receptors_path,configs_path,percent = 0.15,ucb_coe
         ucb_variation_ligands = Proteins(ligands_path)
 
     test_solvers = [
-        UCB_Variation(ucb_variation_ligands,receptors,configs,percent,c=ucb_coefficient)
+        rUCB(ucb_variation_ligands,receptors,configs,percent,c=ucb_coefficient)
     ]
 
     for s in test_solvers:
         s.run(N)
         item_list = sorted(s.estimated_probas.items(),key=operator.itemgetter(1),reverse=True)
-        #print('\n%sligands_score:'%(s.name),item_list)
+        #print('\n%sligands_Ka:'%(s.name),item_list)
         with open('%s_order.txt'%(s.name),'w') as f:
             f.write(json.dumps(s.actions))
-        with open('%s_exploit.txt'%(s.name),'w') as f:
+        with open('%s_loop.txt'%(s.name),'w') as f:
             f.write(json.dumps(s.exploit_counts))
-        with open('%s_explore.txt'%(s.name),'w') as f:
+        with open('%s_initialization.txt'%(s.name),'w') as f:
             f.write(json.dumps(s.explore_counts))
         with open('./%s_result.txt'%(s.name), 'w') as f:
-            f.write("filename\t score\t \n")
+            f.write("filename\t <Ka>\t \n")
             for i in range(len(item_list)):
                 f.write("%s\t %s\t \n"%(item_list[i][0],item_list[i][1]))
         if hasattr(s,"process"):
             with open('%s_process.csv'%(s.name),"w") as f: 
                 writer = csv.writer(f)
-                writer.writerow(["id","ligand","receptor","PKa"])
+                writer.writerow(["id","ligand","receptor","Ka"])
                 writer.writerows(s.process)
 def main(argv):
    global mode
@@ -66,17 +66,17 @@ def main(argv):
    solve = None
    n_virtual_ligands = None
    try:
-        opts, args = getopt.getopt(argv,"hc:p:u:f:o:m",["counts=","percent=","ucb=","config=","solve","mode="])
+        opts, args = getopt.getopt(argv,"h:T:m:u:f:o",["counts=","percent=","ucb=","config=","solve="])
    except getopt.GetoptError:
-        print ('python main.py -c <dock counts> -p <percentage> -u <ucb_coefficient> -f <config_path> -o <don\'t solve>')
+        print ('python main.py -T <dock counts> -m <percentage> -u <ucb_coefficient> -f <config_path> -o <don\'t solve>')
         sys.exit(2)
    for opt, arg in opts:
-        if opt == '-h':
-            print('python main.py -c <dock counts> -p <percentage> -u <ucb_coefficient> -f <config_path> -o <don\'t solve>')
+        if opt == '-h': 
+            print('python main.py -T <dock counts> -m <percentage> -u <ucb_coefficient> -f <config_path> -o <don\'t solve>')
             sys.exit()
-        elif opt in ("-c", "--counts"):
+        elif opt in ("-T", "--counts"):
             counts = int(arg)
-        elif opt in ("-p", "--percent"):
+        elif opt in ("-m", "--percent"):
             percent = float(arg)
         elif opt in ("-u", "--ucb"):
             ucb_coefficient = float(arg)
@@ -84,8 +84,6 @@ def main(argv):
             config_path = arg
         elif opt in ("-o", "--solve"):# dont solve the question
             solve = arg
-        elif opt in ("-m","--mode"):
-            mode = arg
         elif opt in ("-n","--n_virtual_ligands"):
             n_virtual_ligands = arg
         
